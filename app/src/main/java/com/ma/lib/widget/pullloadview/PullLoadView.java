@@ -37,7 +37,6 @@ public class PullLoadView extends SwipeRefreshLayout{
         this.context = context;
         setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         recycleView = new RecyclerView(context);
-//        final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         final GridLayoutManager layoutManager = new GridLayoutManager(context, 2);
         recycleView.setLayoutManager(layoutManager);
         recycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {

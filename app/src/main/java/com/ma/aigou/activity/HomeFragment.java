@@ -21,10 +21,19 @@ public class HomeFragment extends BaseFragment{
     View currView = null;
     @Bind(R.id.refreshView)
     PullLoadView2 pullLoadView;
+    @Bind(R.id.change)
+    View change;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         currView = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, currView);
         initView();
+        change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pullLoadView.changeShowType(true, 2);
+            }
+        });
         return currView;
     }
 

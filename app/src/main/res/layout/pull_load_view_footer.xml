@@ -12,10 +12,10 @@
         android:gravity="center"
         android:text="foot②"
         />
-
     <ProgressBar
         android:id="@+id/progress"
-        style="?android:attr/progressBarStyle"
         android:layout_width="20dp"
-        android:layout_height="20dp" />
+        android:layout_height="20dp"
+        android:indeterminateDrawable="@drawable/custom_progress"
+        />
 </LinearLayout>

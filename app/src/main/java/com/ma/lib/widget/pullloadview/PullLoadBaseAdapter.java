@@ -5,8 +5,6 @@ import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +88,7 @@ public abstract class PullLoadBaseAdapter<T> extends RecyclerView.Adapter<Recycl
         if (headViews.get(viewType) != null){
             return new HeadViewHolder(headViews.get(viewType));
         }else  if (viewType == TYPE_FOOTER) {
-            View view = layoutInflater.inflate(R.layout.layout_footer, parent, false);
+            View view = layoutInflater.inflate(R.layout.pull_load_view_footer, parent, false);
             footLay = view;
             footLay.setOnClickListener(new View.OnClickListener() {
                 @Override

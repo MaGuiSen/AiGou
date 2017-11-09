@@ -4,14 +4,12 @@ import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ma.aigou.R;
@@ -38,6 +36,16 @@ public class PullLoadView2 extends PtrFrameLayout {
     PullLoadBaseAdapter adapter = null;
     Context context = null;
     public RecyclerView recycleView = null;
+    View headLay = null;
+    TextView headStateTxt = null;
+    View layHeadState = null;
+    ImageView imgRefreshBg = null;
+    int mRotateAniTime = 150;
+    RotateAnimation mFlipAnimation = null;
+    RotateAnimation mReverseFlipAnimation = null;
+    ImageView imgHeadArrow = null;
+    ProgressBar headProgressBar = null;
+    GridLayoutManager layoutManager = null;
 
     public PullLoadView2 setPullLoadListener(PullLoadListener pullLoadListener) {
         this.pullLoadListener = pullLoadListener;
@@ -60,7 +68,6 @@ public class PullLoadView2 extends PtrFrameLayout {
         //说明：默认头部是一个屏幕的高度（大概）
         //设置阻力
         setResistance(1.4f);
-
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -82,14 +89,13 @@ public class PullLoadView2 extends PtrFrameLayout {
 
     private void initRecycleView() {
         recycleView = new RecyclerView(context);
-        //final LinearLayoutManager layoutManager = new LinearLayoutManager(context);
-        final GridLayoutManager layoutManager = new GridLayoutManager(context, 2);
+        layoutManager = new GridLayoutManager(context, 1);
         recycleView.setLayoutManager(layoutManager);
         recycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                    int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
+                    int lastVisiblePosition  = layoutManager.findLastVisibleItemPosition();
                     if(lastVisiblePosition >= layoutManager.getItemCount() - 2){
                         onEndReached(false);
                     }
@@ -101,16 +107,41 @@ public class PullLoadView2 extends PtrFrameLayout {
 
     private void initHeadLay(){
         //组建头部
-        headLay = View.inflate(context, R.layout.layout_header_refresh, null);
+        headLay = View.inflate(context, R.layout.pull_load_view_header_refresh, null);
         headStateTxt = (TextView) headLay.findViewById(R.id.txt_header_state);
         layHeadState = headLay.findViewById(R.id.lay_state);
+        imgHeadArrow = (ImageView) headLay.findViewById(R.id.img_load_arrow);
+        headProgressBar = (ProgressBar) headLay.findViewById(R.id.progressbar_load);
+        imgRefreshBg = (ImageView) headLay.findViewById(R.id.img_refresh_bg);
+
+        resetView();
+        buildAnimation();
+
         addView(headLay);
     }
 
-    View headLay = null;
-    TextView headStateTxt = null;
-    View layHeadState = null;
-    ImageView imgRefreshBg = null;
+    private void resetView() {
+        hideRotateView();
+        headProgressBar.setVisibility(GONE);
+    }
+
+    private void hideRotateView() {
+        imgHeadArrow.clearAnimation();
+        imgHeadArrow.setVisibility(GONE);
+    }
+
+    private void buildAnimation() {
+        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mFlipAnimation.setInterpolator(new LinearInterpolator());
+        mFlipAnimation.setDuration(mRotateAniTime);
+        mFlipAnimation.setFillAfter(true);
+
+        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mReverseFlipAnimation.setInterpolator(new LinearInterpolator());
+        mReverseFlipAnimation.setDuration(mRotateAniTime);
+        mReverseFlipAnimation.setFillAfter(true);
+    }
+
     public void initView(PullLoadBaseAdapter adapter){
         this.adapter = adapter;
         this.adapter.setFooterClickListener(new PullLoadBaseAdapter.FooterClickListener() {
@@ -124,48 +155,53 @@ public class PullLoadView2 extends PtrFrameLayout {
         //下拉刷新
         addPtrUIHandler(new PtrUIHandler() {
             @Override
-            public void onUIReset(PtrFrameLayout frame) {
+            public void onUIReset(PtrFrameLayout frame)
+            {
+                resetView();
                 headStateTxt.setText("下拉刷新");
             }
 
             @Override
             public void onUIRefreshPrepare(PtrFrameLayout frame) {
+                headProgressBar.setVisibility(GONE);
+                imgHeadArrow.setVisibility(VISIBLE);
                 headStateTxt.setText("下拉刷新");
             }
 
             @Override
             public void onUIRefreshBegin(PtrFrameLayout frame) {
+                hideRotateView();
+                headProgressBar.setVisibility(VISIBLE);
                 headStateTxt.setText("刷新中");
             }
 
             @Override
             public void onUIRefreshComplete(PtrFrameLayout frame) {
+                hideRotateView();
+                headProgressBar.setVisibility(GONE);
                 headStateTxt.setText("刷新完成");
             }
 
             @Override
             public void onUIPositionChange(PtrFrameLayout frame, boolean isUnderTouch, byte status, PtrIndicator ptrIndicator) {
-//                headStateTxt.setText("onUIPositionChange");
                 final int mOffsetToRefresh = frame.getOffsetToRefresh();
                 final int currentPos = ptrIndicator.getCurrentPosY();
                 final int lastPos = ptrIndicator.getLastPosY();
 
                 if (currentPos < mOffsetToRefresh && lastPos >= mOffsetToRefresh) {
                     if (isUnderTouch && status == PtrFrameLayout.PTR_STATUS_PREPARE) {
-                        //                 crossRotateLineFromBottomUnderTouch(frame);
-                        //                 if (mRotateView != null) {
-                        //                 mRotateView.clearAnimation();
-                        //                 mRotateView.startAnimation(mReverseFlipAnimation);
-                        //                 }
-                        headStateTxt.setText("下拉刷新");
+                         if (imgHeadArrow != null) {
+                            imgHeadArrow.clearAnimation();
+                            imgHeadArrow.startAnimation(mReverseFlipAnimation);
+                         }
+                         headStateTxt.setText("下拉刷新");
                     }
                 } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
                     if (isUnderTouch && status == PtrFrameLayout.PTR_STATUS_PREPARE) {
-                        //                 crossRotateLineFromTopUnderTouch(frame);
-                        //                 if (mRotateView != null) {
-                        //                 mRotateView.clearAnimation();
-                        //                 mRotateView.startAnimation(mFlipAnimation);
-                        //                 }
+                        if (imgHeadArrow != null) {
+                            imgHeadArrow.clearAnimation();
+                            imgHeadArrow.startAnimation(mFlipAnimation);
+                        }
                         headStateTxt.setText("释放刷新");
                     }
                 }
@@ -176,7 +212,6 @@ public class PullLoadView2 extends PtrFrameLayout {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header)
             {
-//                return true;
                 return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
             }
 
@@ -197,7 +232,6 @@ public class PullLoadView2 extends PtrFrameLayout {
             refreshStatus = PullLoadBaseAdapter.STATUS_LOADING;
         }
     }
-
 
     public void onEndReached(boolean isFailToReLoad){
         if(pullLoadListener == null)
@@ -233,6 +267,19 @@ public class PullLoadView2 extends PtrFrameLayout {
             refreshComplete();
         }
         adapter.notifyAllChange(dataListAll, loadMoreStatus, canLoadMore);
+    }
+
+    /**
+     * 更改显示的类型
+     */
+    public void changeShowType(boolean isGrid, int column){
+        if(!isGrid){
+            column = 1;
+        }else{
+            column = column<=0?1:column;
+        }
+        layoutManager.setSpanCount(column);
+        recycleView.setLayoutManager(layoutManager);
     }
 
     public List loadData(List sourceList, List newList, boolean isLoadMore){

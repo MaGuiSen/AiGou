@@ -67,7 +67,8 @@ public class PullLoadView2 extends PtrFrameLayout {
     private void initSelf() {
         //说明：默认头部是一个屏幕的高度（大概）
         //设置阻力
-        setResistance(1.4f);
+        setResistance(1.8f);
+        disableWhenHorizontalMove(true); //防止滑动冲突
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

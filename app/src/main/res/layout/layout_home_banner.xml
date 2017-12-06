@@ -5,11 +5,11 @@
     android:background="#ffff00"
     android:gravity="center"
     android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/title_show"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:gravity="center"
-        android:text="header1"
-        />
+    <com.ma.lib.widget.banner.BannerView
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:background="#ff00ff"
+        android:layout_height="150dp">
+
+    </com.ma.lib.widget.banner.BannerView>
 </LinearLayout>

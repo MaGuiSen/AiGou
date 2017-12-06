@@ -2,6 +2,7 @@ package com.ma.aigou
 
 import android.app.Application
 import com.ma.aigou.view.MyCrashHandler
+import com.ma.lib.utils.ImageLoad
 
 class MyApplication : Application() {
     //定义静态变量
@@ -19,5 +20,6 @@ class MyApplication : Application() {
         super.onCreate()
         myApplication = this
         MyCrashHandler.init(this)
+        ImageLoad.initImageLoader(this)
     }
 }

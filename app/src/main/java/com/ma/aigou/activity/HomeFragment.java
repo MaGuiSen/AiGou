@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.ma.aigou.R;
 import com.ma.aigou.adapter.ListAdapter;
+import com.ma.lib.widget.banner.BannerView;
 import com.ma.lib.widget.pullloadview.PullLoadView2;
 
 import java.util.ArrayList;
@@ -39,9 +40,31 @@ public class HomeFragment extends BaseFragment{
 
     boolean isSuccess = false;
 
+    View initBanner(){
+        View layout_banner = View.inflate(getActivity(),R.layout.layout_home_banner, null);
+        BannerView bannerView = (BannerView) layout_banner.findViewById(R.id.banner);
+        BannerView.BannerData bannerData = new BannerView.BannerData();
+        bannerData.imgUrl = "https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=157669227,183289158&fm=173&s=F58045B71440BAE4248186AF0300700E&w=640&h=374&img.JPEG";
+
+        BannerView.BannerData bannerData2 = new BannerView.BannerData();
+        bannerData.imgUrl = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2100961456,64396807&fm=173&s=EA997E8588534AD447B8A0A303007042&w=540&h=360&img.JPEG";
+
+        BannerView.BannerData bannerData3 = new BannerView.BannerData();
+        bannerData.imgUrl = "https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2433582460,3457889240&fm=173&s=AF41CE100D92C8D05848194D030070F8&w=572&h=324&img.JPEG";
+
+
+        List<BannerView.BannerData> dataList = new ArrayList<>();
+        dataList.add(bannerData);
+        dataList.add(bannerData2);
+        dataList.add(bannerData3);
+        bannerView.notifyDataChange(dataList);
+
+        return layout_banner;
+    }
+
     public void initView(){
         ListAdapter adapter = new ListAdapter(getContext());
-        adapter.addHeadView(View.inflate(getActivity(),R.layout.layout_header, null));
+        adapter.addHeadView(initBanner());
         adapter.addHeadView(View.inflate(getActivity(),R.layout.layout_header2, null));
         pullLoadView.initView(adapter);
         pullLoadView.setPullLoadListener(new PullLoadView2.PullLoadListener() {

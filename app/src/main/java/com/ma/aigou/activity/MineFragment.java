@@ -31,7 +31,6 @@ public class MineFragment extends BaseFragment{
         pullLoadView = (PullLoadView) currView.findViewById(R.id.pullLoadView);
         adapter = new ListAdapter(getContext());
         adapter.addHeadView(View.inflate(getActivity(),R.layout.layout_home_banner, null));
-        adapter.addHeadView(View.inflate(getActivity(),R.layout.layout_header2, null));
         pullLoadView.initView(adapter);
         pullLoadView.setPullLoadListener(new PullLoadView.PullLoadListener() {
             @Override

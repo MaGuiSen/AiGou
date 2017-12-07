@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.ma.aigou.R;
 import com.ma.aigou.adapter.ListAdapter;
@@ -11,7 +14,9 @@ import com.ma.lib.widget.banner.BannerView;
 import com.ma.lib.widget.pullloadview.PullLoadView2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -62,10 +67,66 @@ public class HomeFragment extends BaseFragment{
         return layout_banner;
     }
 
+    void addCategory(List<Map<String, Object>> categoryList, String title, int icon){
+        Map<String, Object> category = new HashMap<>();
+        category.put("icon", icon);
+        category.put("title", title);
+        categoryList.add(category);
+    }
+
+    View initCategory(){
+        List<Map<String, Object>> categoryList = new ArrayList<>();
+        addCategory(categoryList, "天猫", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "聚划算", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "天猫国际", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "外卖", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "天猫超市", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "充值中心", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "飞猪旅行", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "领金币", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "拍卖", R.mipmap.icon_tianmao);
+        addCategory(categoryList, "分类", R.mipmap.icon_tianmao);
+
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout layoutLine1 = new LinearLayout(getContext());
+        layoutLine1.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout layoutLine2 = new LinearLayout(getContext());
+        layoutLine2.setOrientation(LinearLayout.HORIZONTAL);
+
+        layout.addView(layoutLine1);
+        layout.addView(layoutLine2);
+        int numPerLine = 5;
+
+        LinearLayout c_layoutLine = layoutLine1;
+        for(int i=0;i<categoryList.size();i++){
+            if(i == numPerLine){
+                c_layoutLine = layoutLine2;
+            }
+            Map<String, Object> categoryItem = categoryList.get(i);
+            LinearLayout category = (LinearLayout) View.inflate(getActivity(),R.layout.layout_category_item, null);
+            category.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
+
+            ImageView iconImg = (ImageView) category.findViewById(R.id.img_icon);
+            TextView title = (TextView) category.findViewById(R.id.txt_title);
+            iconImg.setImageResource((Integer) categoryItem.get("icon"));
+            title.setText((String) categoryItem.get("title"));
+            c_layoutLine.addView(category);
+            category.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+        }
+        return layout;
+    }
+
     public void initView(){
         ListAdapter adapter = new ListAdapter(getContext());
         adapter.addHeadView(initBanner());
-        adapter.addHeadView(View.inflate(getActivity(),R.layout.layout_header2, null));
+        adapter.addHeadView(initCategory());
         pullLoadView.initView(adapter);
         pullLoadView.setPullLoadListener(new PullLoadView2.PullLoadListener() {
             @Override

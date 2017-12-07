@@ -10,21 +10,21 @@ import android.view.View;
  * @author M
  *
  */
-public class AutoChangeView extends View {
+public class Indicator extends View {
 	private Paint paint = new Paint();
 	private int whichChoice = 0;
 	int choiceColor = 0xffe6e6e6;
 	int noChoiceColor = 0xffffffff;
 	int space = 5;
-	public AutoChangeView(Context context, AttributeSet attrs, int defStyle) {
+	public Indicator(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
-	public AutoChangeView(Context context, AttributeSet attrs) {
+	public Indicator(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public AutoChangeView(Context context) {
+	public Indicator(Context context) {
 		super(context);
 
 	}
@@ -33,7 +33,7 @@ public class AutoChangeView extends View {
 	 * 
 	 * @param whichChoice <= num-1
 	 */
-	public void setCurrentChoiced(int whichChoice) {
+	public void setCurrentChoice(int whichChoice) {
 		this.whichChoice = whichChoice;
 		invalidate();
 	}
@@ -49,6 +49,7 @@ public class AutoChangeView extends View {
 		this.num = num;
 		invalidate();
 	}
+
 	int[] colors ;
 	public void getLocat(int width, int num) {
 		widthRound = new int[num];

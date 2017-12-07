@@ -35,6 +35,7 @@ public class BannerView extends FrameLayout {
     private int currentIndex = 0; //当前轮播页
     Timer timer;
     private static int To_Next = 10;
+    Indicator indicator;
 
     private Handler handler = new Handler(){
         @Override
@@ -119,7 +120,22 @@ public class BannerView extends FrameLayout {
                 Toast.makeText(context, "dddddddddddd", Toast.LENGTH_SHORT).show();
             }
         });
-        addView(viewPager);
+        addView(viewPager, 0);
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        // 得到指示器
+        for(int index=0;index<getChildCount();index++){
+            View child = getChildAt(index);
+            if(child instanceof Indicator){
+                indicator = (Indicator) child;
+                indicator.setChoiceColor(0xffffffff);
+                indicator.setNoChoiceColor(0xef808080);
+                indicator.setVisibility(View.GONE);
+            }
+        }
     }
 
     public void notifyDataChange(List<BannerData> dataList){
@@ -146,6 +162,14 @@ public class BannerView extends FrameLayout {
             });
             ImageLoad.load(dataItem.imgUrl, imageView);
             viewList.add(imageView);
+        }
+        if(indicator != null) {
+            if (viewList.size() <= 1) {
+                indicator.setVisibility(View.GONE);
+            } else {
+                indicator.setVisibility(View.VISIBLE);
+                indicator.setNum(viewList.size());
+            }
         }
         myPagerAdapter.notifyDataSetChanged();
         currentIndex = viewList.size()*10; //
@@ -237,6 +261,9 @@ public class BannerView extends FrameLayout {
         @Override
         public void onPageSelected(int pos) {
             currentIndex = pos;
+            if(indicator != null) {
+                indicator.setCurrentChoice(pos % viewList.size());
+            }
         }
     }
 
